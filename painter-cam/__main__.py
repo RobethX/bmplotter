@@ -4,6 +4,8 @@ import cv2 as cv
 import numpy as np
 
 from blackstripes import spiral, sketchy, crossed
+from penkit_optimize.cli import run_optimizer
+import vpype
 
 # Blackstripes
 LEVELS = [180, 108, 180, 108]

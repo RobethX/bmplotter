@@ -31,3 +31,7 @@ allow_prereleases = true
 git = "https://github.com/fullscreennl/blackstripes-python-extensions"
 editable = true
 subdirectory = "src"
+
+[packages.vpype]
+git = "https://github.com/abey79/vpype.git"
+editable = true
