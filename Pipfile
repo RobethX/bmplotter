@@ -19,7 +19,7 @@ tox = "*" # Automated and standardized testing in Python
 
 [packages]
 numpy = "*" # Useful math library
-
+opencv-python = "*" # Python computer vision library
 
 [requires]
 python_version = "3.6"
