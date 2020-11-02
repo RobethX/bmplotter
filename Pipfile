@@ -19,10 +19,10 @@ tox = "*" # Automated and standardized testing in Python
 
 [packages]
 numpy = "*" # Useful math library
-opencv-python = "*" # Python computer vision library
+opencv-contrib-python = "*" # Python computer vision library (with extras)
 
-[requires]
-python_version = "3.6"
+#[requires]
+#python_version = "3.6"
 
 [pipenv]
 allow_prereleases = true
