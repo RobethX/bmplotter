@@ -15,6 +15,7 @@ black = "*"
 isort = "*"
 pytest = "*"
 tox = "*"
+pylint = "*"
 
 [packages]
 numpy = "*"
@@ -23,6 +24,10 @@ opencv-contrib-python = "*"
 rtree = "*"
 penkit-optimize = "*"
 flask = "*"
+svgpathtools = "*"
+
+[packages.hatched]
+git = "https://github.com/abey79/hatched.git"
 
 [pipenv]
 allow_prereleases = true
