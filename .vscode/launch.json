@@ -5,14 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: CLI",
+            "type": "python",
+            "request": "launch",
+            "program": "painter-cam",
+            "console": "integratedTerminal",
+            "args": [
+                "${workspaceFolder}/examples/gompei.jpg"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
-            "args": [
-                "${workspaceFolder}/examples/test.png"
-            ]
+            "console": "integratedTerminal"
         },
         {
             "name": "Python: Flask",

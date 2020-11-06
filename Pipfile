@@ -25,12 +25,13 @@ rtree = "*"
 penkit-optimize = "*"
 flask = "*"
 svgpathtools = "*"
-
-[packages.hatched]
-git = "https://github.com/abey79/hatched.git"
+pillow = "*"
 
 [pipenv]
 allow_prereleases = true
+
+[packages.hatched]
+git = "https://github.com/abey79/hatched.git"
 
 [packages.blackstripes]
 git = "https://github.com/fullscreennl/blackstripes-python-extensions"
