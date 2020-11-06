@@ -1,12 +1,17 @@
+# TODO: say where this algorithm came from
+
 from __future__ import division, print_function
 import numpy as np
 from PIL import Image
 from svgpathtools import *
+import svgpathtools
 from svgpathtools.path import polyline
 from svgwrite.mixins import ViewBox
 from . import Generator
 
 CLOSED_WARNING_ON=False # suppress svgpathtools warning
+
+DEF_COLOR="#000000"
 
 DEF_FREQUENCY = 128
 MIN_FREQUENCY = 5
@@ -20,24 +25,24 @@ DEF_AMPLITUDE = 2.0
 MIN_AMPLITUDE = 0.1
 MAX_AMPLITUDE = 5.0
 
-DEF_SPACING = 0.8
+DEF_SPACING = 1.0
 MIN_SPACING = 0.5
 MAX_SPACING = 2.9
 
+DEF_HORIZONTAL_PHASE_SHIFT = 0
+DEF_VERTICAL_PHASE_SHIFT = 0
+
+MIN_POINTS = 5
+BRIGHTNESS_THRESHOLD = 250
+
 class Squiggle(Generator):
-    def __init__(self, image_path):
-        super().__init__(image_path)
+    def __init__(self, input_path, output_path):
+        super().__init__(input_path, output_path)
 
         self.frequency = DEF_FREQUENCY
         self.lineCount = DEF_LINE_COUNT
         self.amplitude = DEF_AMPLITUDE
         self.spacing = DEF_SPACING
-
-        squiggles = Path(*self.generate()).continuous_subpaths()
-
-        disvg(squiggles)
-        print(squiggles.count)
-        #disvg(Path(*squiggles))
 
     def setFrequency(self, frequency):
         self.frequency = np.clip(frequency, MIN_FREQUENCY, MAX_FREQUENCY)
@@ -55,31 +60,42 @@ class Squiggle(Generator):
         self.spacing = np.clip(spacing, MIN_SPACING, MAX_SPACING)
         return self.spacing
 
-    def generate(self):
-        squiggleData = []
+    def generate(self, color=DEF_COLOR, x_offset=DEF_HORIZONTAL_PHASE_SHIFT, y_offset=DEF_VERTICAL_PHASE_SHIFT, smooth=False, continuous=False):
         squiggles = []
-        #squiggles = polyline()
-        #squiggles = Document()
 
         for y in range(0, self.img.height, self.img.height // self.lineCount): # self.img.height // self.lineCount
             a = 0
-            currentLine = [] # store bits of the line
-            currentLine.append(complex(0, y)) # start the line
+            current_line = [] # store bits of the line
+            if continuous:
+                current_line.append(complex(0, y + y_offset)) # start the line
 
             for x in np.arange(self.spacing, self.img.width, self.spacing):
-                v = np.mean(self.img.getpixel((x, y)))
+                v = np.mean(self.img.getpixel((x, y))) # TODO: downsample image and average chunk!!
 
                 #r = (255 - v) / self.lineCount * self.amplitude
                 r = self.amplitude * (255 - v) / self.lineCount
                 a += (255 - v) / self.frequency
 
-                currentLine.append(complex(x, y + np.sin(a)*r))
+                point = complex(x, y + np.sin(a + x_offset)*r + y_offset)
 
-            #squiggleData.append(currentLine)
-            squiggles.extend(polyline(*currentLine))
-            #squiggles.add_path(polyline(*currentLine))
+                if continuous:
+                    current_line.append(point)
+                else:
+                    if (v < BRIGHTNESS_THRESHOLD or (len(current_line) > 0 and len(current_line) < MIN_POINTS)):
+                        current_line.append(point)
+                    else:
+                        squiggles.extend(polyline(*current_line))
+                        current_line = []
 
-        return squiggles
+            current_line_path = polyline(*current_line)
+            if smooth:
+                current_line_path = smoothed_path(current_line_path)
+            squiggles.extend(current_line_path)
+
+        paths = Path(*squiggles).continuous_subpaths()
+        wsvg(paths, filename=self.output_path, colors=([color]*len(paths)))
+
+        return self.output_path
 
 if __name__ == "__main__":
     gen = Squiggle()
