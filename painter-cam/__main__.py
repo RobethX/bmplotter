@@ -9,8 +9,12 @@ from svgpathtools import svg2paths, wsvg
 import vpype
 from hatched import hatched
 
+from utils.color import *
+from generators.Squiggle import Squiggle
+
 NUM_SHADES = 4 # number of shading levels
-COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
+#COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
+COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
 
 # Blackstripes
 DEF_LEVELS = [200, 146, 110, 56] # TODO: generate with k-means
@@ -99,7 +103,7 @@ def processImage():
     img = img_raw
 
     kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-    img = cv.medianBlur(img,5)
+    #img = cv.medianBlur(img,5)
     #img = cv.filter2D(img, -1, kernel)
     img = cv.bilateralFilter(img, 9, 50, 50) # bilateral filter
     #img = cv.ximgproc.anisotropicDiffusion(img, 0.5, 0.02, 10) # 2d anisotropic diffusion
@@ -138,12 +142,12 @@ def processImage():
     #blue = cv.bitwise_and(img, img, mask=mask_blue)
     
     # DEBUG: show image
-    #cv.imshow("image", np.hstack([img_raw, img, hsv, img_contours]))
+    cv.imshow("image", np.hstack([img_raw, img, hsv, img_contours]))
     #cv.imshow("image2", np.hstack([hue, saturation, value, edges]))
-    #while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
-    #    if cv.waitKey(100) >= 0:
-    #        break
-    #cv.destroyAllWindows()
+    while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
+        if cv.waitKey(100) >= 0:
+            break
+    cv.destroyAllWindows()
 
     return img
     #return hsv
@@ -156,14 +160,20 @@ def main():
     global args
     args = parser.parse_args()
 
+    # TODO: check if file exists
     #img = processImage()
     img = cv.imread(args.filename)
+
+    gen = Squiggle(args.filename)
 
     tmp_path = os.path.normpath("tmp")
     if not os.path.exists(tmp_path):
         os.mkdir(tmp_path)
 
-    channels = cv.split(img)
+    #cmyk = BGR2CMYK(img)
+    cmy = BGR2CMY(img)
+
+    channels = cv.split(cmy)
     channels_processed = []
 
     svg = vpype.VectorData()
@@ -197,7 +207,7 @@ def main():
 
         #channel_processed_svg = hatched.hatch(path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=1, image_scale=SCALE, show_plot=False)
 
-        channel_processed = cv.imread(getOutputPngPath(output_path), cv.IMREAD_GRAYSCALE)
+        channel_processed = cv.imread(getOutputPngPath(output_path)) # , cv.IMREAD_GRAYSCALE
         channels_processed.append(channel_processed)
 
         #channel_processed_svg = vpype.read_svg(output_path, 0.1, simplify=False)
@@ -209,20 +219,22 @@ def main():
 
         c += 1
 
-    img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    _, img_gray = cv.threshold(img_gray, 63, 255,cv.THRESH_TRUNC)
-    gray_path = os.path.join(tmp_path, "img-bw.png")
-    cv.imwrite(gray_path, img_gray)
+    #img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    #_, img_gray = cv.threshold(img_gray, 63, 255,cv.THRESH_TRUNC)
+    #gray_path = os.path.join(tmp_path, "img-bw.png")
+    #cv.imwrite(gray_path, img_gray)
     #hatched.hatch(gray_path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=0, image_scale=SCALE, show_plot=False)
-    output_path = applySpiral(gray_path, line_color="#000000", levels=levels)
+    #output_path = applySpiral(gray_path, line_color="#000000", levels=levels)
     #output_path = applyCrossed(gray_path, levels=levels, line_color="#000000")
 
     #vpype.write_svg("test.svg", svg)
     #vpype.write_hpgl("test.hpgl", svg)
 
-    disp = cv.merge(channels_processed)
-    cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
-    cv.imshow("image", np.hstack([disp]))
+    #disp = cv.merge(channels_processed)
+    #disp = CMY2BGR(disp)
+    #cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
+    #cv.imshow("image", np.hstack([disp]))
+    cv.imshow("image", np.hstack(channels_processed))
     while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
         if cv.waitKey(100) >= 0:
             break
