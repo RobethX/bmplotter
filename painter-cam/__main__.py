@@ -9,12 +9,16 @@ from svgpathtools import svg2paths, wsvg
 import vpype
 from hatched import hatched
 
+from utils.image import *
 from utils.color import *
+from utils.path import TempFolder
 from generators.Squiggle import Squiggle
 
 NUM_SHADES = 4 # number of shading levels
 #COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
-COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
+#COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
+COLORS = ["#FFFF00", "#FF00FF", "#00FFFF"] # YMC
+#COLORS = ["#0000FF", "#00FF00", "#FF0000"] # BGR
 
 # Blackstripes
 DEF_LEVELS = [200, 146, 110, 56] # TODO: generate with k-means
@@ -44,7 +48,6 @@ def getOutput(input_path, method=""):
         name += f"-{method}"
     #print(name)
     return name + ".svg"
-
 
 def getOutputPngPath(output_path):
     return output_path + ".png"
@@ -164,16 +167,19 @@ def main():
     #img = processImage()
     img = cv.imread(args.filename)
 
-    gen = Squiggle(args.filename)
+    #img = removeWhite(img)
+
+    tmp = TempFolder()
 
     tmp_path = os.path.normpath("tmp")
+    #tmp_path = tmp.getPath()
     if not os.path.exists(tmp_path):
         os.mkdir(tmp_path)
 
     #cmyk = BGR2CMYK(img)
-    cmy = BGR2CMY(img)
+    #cmy = BGR2CMY(img)
 
-    channels = cv.split(cmy)
+    channels = cv.split(img) #np.mod(cmy, 255)
     channels_processed = []
 
     svg = vpype.VectorData()
@@ -200,10 +206,16 @@ def main():
 
         #levels = np.sort(levels)[::-1] # sort in decending order
 
-        output_path = applySpiral(path, line_color=COLORS[c], levels=levels)
+        #output_path = applySpiral(path, line_color=COLORS[c], levels=levels)
         #output_path = applyCrossed(path, line_color=COLORS[c], levels=levels)
         #output_path = applySketchy(path)
-        #output_path = os.path.join(tmp_path, f"img-{c}.svg")
+        output_path = os.path.join(tmp_path, f"img-{c}.svg")
+        #output_path = tmp.getPath(f"img-{c}.svg")
+        gen = Squiggle(path, output_path)
+        #gen.output_path = output_path
+        #gen.setImage(path)
+        gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
+        print(output_path)
 
         #channel_processed_svg = hatched.hatch(path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=1, image_scale=SCALE, show_plot=False)
 
@@ -234,11 +246,11 @@ def main():
     #disp = CMY2BGR(disp)
     #cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
     #cv.imshow("image", np.hstack([disp]))
-    cv.imshow("image", np.hstack(channels_processed))
-    while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
-        if cv.waitKey(100) >= 0:
-            break
-    cv.destroyAllWindows()
+    #cv.imshow("image", np.hstack(channels_processed))
+    #while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
+    #    if cv.waitKey(100) >= 0:
+    #        break
+    #cv.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

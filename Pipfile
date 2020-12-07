@@ -11,7 +11,7 @@ flake8-builtins = "*"
 flake8-blind-except = "*"
 flake8-use-fstring = "*"
 pep8-naming = "*"
-black = "*"
+#black = "*"
 isort = "*"
 pytest = "*"
 tox = "*"
@@ -24,7 +24,7 @@ opencv-contrib-python = "*"
 rtree = "*"
 penkit-optimize = "*"
 flask = "*"
-svgpathtools = "*"
+#svgpathtools = "*"
 pillow = "*"
 
 [pipenv]
@@ -32,6 +32,7 @@ allow_prereleases = true
 
 [packages.hatched]
 git = "https://github.com/abey79/hatched.git"
+editable = true
 
 [packages.blackstripes]
 git = "https://github.com/fullscreennl/blackstripes-python-extensions"
@@ -40,4 +41,8 @@ subdirectory = "src"
 
 [packages.vpype]
 git = "https://github.com/abey79/vpype.git"
+editable = true
+
+[packages.svgpathtools]
+git = "https://github.com/mathandy/svgpathtools.git"
 editable = true
