@@ -17,7 +17,7 @@ DEF_FREQUENCY = 128
 MIN_FREQUENCY = 5
 MAX_FREQUENCY = 256
 
-DEF_LINE_COUNT = 100
+DEF_LINE_COUNT = 75
 MIN_LINE_COUNT = 10
 MAX_LINE_COUNT = 200
 
@@ -81,7 +81,7 @@ class Squiggle(Generator):
                 if continuous:
                     current_line.append(point)
                 else:
-                    if (v < BRIGHTNESS_THRESHOLD or (len(current_line) > 0 and len(current_line) < MIN_POINTS)):
+                    if (v < BRIGHTNESS_THRESHOLD or (len(current_line) > 0 and len(current_line) < MIN_POINTS)): # TODO: calculate this with greyscale mask
                         current_line.append(point)
                     else:
                         squiggles.extend(polyline(*current_line))

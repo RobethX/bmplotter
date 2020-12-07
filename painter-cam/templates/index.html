@@ -7,15 +7,15 @@
             <img style="position: absolute; right: 50%; top: 50%; transform: translate(50%, -50%); width: 99.5em; opacity: 1;" src="../../tmp/img-2.svg" />
         </div>
         <div id="camera">
-            <video id="camera-preview" style="margin: 0px auto;" width="10em" height="10em" autoplay></video>
+            <video id="camera-preview" style="margin: 0px auto;" width="25em" height="25em" autoplay>Error accessing camera!</video>
         </div>
     </body>
 
     <script>
-        var video = document.querySelector("#camera-preview");
+        var video = document.querySelector("camera-preview");
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function(stream) {
                 video.srcObject = stream;
                 video.play();
             });

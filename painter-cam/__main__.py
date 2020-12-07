@@ -9,6 +9,7 @@ from svgpathtools import svg2paths, wsvg
 import vpype
 from hatched import hatched
 
+from utils.image import *
 from utils.color import *
 from utils.path import TempFolder
 from generators.Squiggle import Squiggle
@@ -17,6 +18,7 @@ NUM_SHADES = 4 # number of shading levels
 #COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
 #COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
 COLORS = ["#FFFF00", "#FF00FF", "#00FFFF"] # YMC
+#COLORS = ["#0000FF", "#00FF00", "#FF0000"] # BGR
 
 # Blackstripes
 DEF_LEVELS = [200, 146, 110, 56] # TODO: generate with k-means
@@ -165,6 +167,8 @@ def main():
     #img = processImage()
     img = cv.imread(args.filename)
 
+    #img = removeWhite(img)
+
     tmp = TempFolder()
 
     tmp_path = os.path.normpath("tmp")
@@ -243,10 +247,10 @@ def main():
     #cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
     #cv.imshow("image", np.hstack([disp]))
     #cv.imshow("image", np.hstack(channels_processed))
-    while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
-        if cv.waitKey(100) >= 0:
-            break
-    cv.destroyAllWindows()
+    #while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
+    #    if cv.waitKey(100) >= 0:
+    #        break
+    #cv.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
