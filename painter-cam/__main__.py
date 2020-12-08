@@ -13,6 +13,7 @@ from utils.image import *
 from utils.color import *
 from utils.path import TempFolder
 from generators.Squiggle import Squiggle
+import svg2gcode
 
 NUM_SHADES = 4 # number of shading levels
 #COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
@@ -214,8 +215,14 @@ def main():
         gen = Squiggle(path, output_path)
         #gen.output_path = output_path
         #gen.setImage(path)
-        gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
+        paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
         print(output_path)
+
+        gcode = svg2gcode.generate_gcode(paths)
+        gcode_path = output_path = os.path.join(tmp_path, f"img-{c}.gcode")
+        gcode_file = open(gcode_path, "w")
+        gcode_file.write(gcode)
+        gcode_file.close
 
         #channel_processed_svg = hatched.hatch(path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=1, image_scale=SCALE, show_plot=False)
 
