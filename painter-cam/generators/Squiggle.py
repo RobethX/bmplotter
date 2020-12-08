@@ -13,19 +13,19 @@ CLOSED_WARNING_ON=False # suppress svgpathtools warning
 
 DEF_COLOR="#000000"
 
-DEF_FREQUENCY = 128
+DEF_FREQUENCY = 192
 MIN_FREQUENCY = 5
 MAX_FREQUENCY = 256
 
-DEF_LINE_COUNT = 75
+DEF_LINE_COUNT = 50
 MIN_LINE_COUNT = 10
 MAX_LINE_COUNT = 200
 
-DEF_AMPLITUDE = 2.0
+DEF_AMPLITUDE = 3.0
 MIN_AMPLITUDE = 0.1
 MAX_AMPLITUDE = 5.0
 
-DEF_SPACING = 1.0
+DEF_SPACING = 1.5
 MIN_SPACING = 0.5
 MAX_SPACING = 2.9
 
@@ -95,7 +95,8 @@ class Squiggle(Generator):
         paths = Path(*squiggles).continuous_subpaths()
         wsvg(paths, filename=self.output_path, colors=([color]*len(paths)))
 
-        return self.output_path
+        #return self.output_path
+        return paths
 
 if __name__ == "__main__":
     gen = Squiggle()
