@@ -17,24 +17,45 @@ def BGR2CMYK(img):
     #k = 1 - np.maximum(b, g, r) # black "key" channel
     #k = np.minimum(b, g, r)
     k = np.divide(k, 255., dtype=np.float)
-    c = np.divide((1 - r - k), (1 - k)) # cyan channel
-    m = np.divide((1 - g - k), (1 - k)) # magenta channel
-    y = np.divide((1 - b - k), (1 - k)) # yellow channel
+    c = np.divide((1. - r - k), (1 - k)) # cyan channel
+    m = np.divide((1. - g - k), (1 - k)) # magenta channel
+    y = np.divide((1. - b - k), (1 - k)) # yellow channel
 
-    #c = (1 - r - k) # cyan channel
-    #m = (1 - g - k) # magenta channel
-    #y = (1 - b - k) # yellow channel
+    c = np.divide((r - k), (k)) # cyan channel
+    m = np.divide((g - k), (k)) # magenta channel
+    y = np.divide((b - k), (k)) # yellow channel
 
-    c = np.uint8(c * 255)
-    m = np.uint8(m * 255)
-    y = np.uint8(y * 255)
-    k = np.uint8(k * 255)
+    #c = (255 - r - k) # cyan channel
+    #m = (255 - g - k) # magenta channel
+    #y = (255 - b - k) # yellow channel
 
-    c *= ~k
+    c = ~np.uint8(np.clip(c * 255., 0, 255))
+    m = ~np.uint8(np.clip(m * 255., 0, 255))
+    y = ~np.uint8(np.clip(y * 255., 0, 255))
+    k = np.uint8(k * 255.)
+
+    #c *= ~k
+    #c *= ~k
+    #c *= ~k
 
     np.seterr(**old_err_state) # restore numpy error handling
 
-    cmyk = cv.merge([m, c, y, k]) # assemble channels
+    cmyk = cv.merge([c, m, y, k]) # assemble channels
+    #cmyk = cv.normalize(cmyk, None, 0, 255, cv.NORM_MINMAX)
+
+    b, g, r = cv.split(img) # split the BGR image into its channels
+    k = cv.cvtColor(img, cv.COLOR_BGR2GRAY) # black "key" channel
+    y = np.uint8(np.clip(np.uint16(b)-k, 0, 255))
+    m = np.uint8(np.clip(np.uint16(g)-k, 0, 255))
+    c = np.uint8(np.clip(np.uint16(r)-k, 0, 255))
+    cmyk = cv.merge([c, m, y, k]) # assemble channels
+
+    cv.imshow("image", np.hstack([c, m, y, k]))
+    while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
+        if cv.waitKey(100) >= 0:
+            break
+    cv.destroyAllWindows()
+
     return cmyk
     
 def BGR2CMY(img):

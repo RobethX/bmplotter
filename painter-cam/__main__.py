@@ -32,6 +32,8 @@ def processImage():
     img_raw = cv.imread(args.filename) # load image
     img = img_raw
 
+    img = cv.normalize(img, None, 0, 255, cv.NORM_MINMAX)
+
     kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
     #img = cv.medianBlur(img,5)
     #img = cv.filter2D(img, -1, kernel)
@@ -42,6 +44,11 @@ def processImage():
     hue = hsv[:,:,0] # get hue channel
     saturation = hsv[:,:,1] # get saturation channel
     value = hsv[:,:,2] # get value channel (brightness)
+
+    edges_hue = cv.Canny(hue, 40, 60) # detect edges
+    edges_saturation = cv.Canny(saturation, 40, 60) # detect edges
+    edges_value = cv.Canny(value, 40, 60) # detect edges
+    edges_hsv = edges_hue+edges_saturation+edges_value
 
     #res = 256 // args.colors
 
@@ -66,14 +73,18 @@ def processImage():
 
     img_contours = np.array(img)
     contours = cv.findContours(edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE) # detect contours
-    #cv.drawContours(img_contours, contours[0], -1, (0,255,0), 1)
+    cv.drawContours(img_contours, contours[0], -1, (0,255,0), 1)
+
+    thresh = cv.adaptiveThreshold(value, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
+    thresh = cv.erode(thresh, None, iterations=3)
 
     #mask_blue = cv.inRange(hsv, np.array([55, 0, 0]), np.array([120, 255, 255]))
     #blue = cv.bitwise_and(img, img, mask=mask_blue)
     
     # DEBUG: show image
-    cv.imshow("image", np.hstack([img_raw, img, hsv, img_contours]))
+    #cv.imshow("image", np.hstack([img_raw, img, hsv, img_contours]))
     #cv.imshow("image2", np.hstack([hue, saturation, value, edges]))
+    cv.imshow("image", np.vstack([np.hstack([hue, saturation, value, edges]), np.hstack([thresh, edges_saturation, edges_value, edges_hsv])]))
     while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
         if cv.waitKey(100) >= 0:
             break
