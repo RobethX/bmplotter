@@ -6,13 +6,9 @@ import numpy as np
 
 from blackstripes import spiral, sketchy, crossed
 from svgpathtools import svg2paths, wsvg
-import vpype
-from hatched import hatched
 
-from utils.image import *
-from utils.color import *
-from utils.path import TempFolder
-from generators.Squiggle import Squiggle
+import utils
+import generators
 import svg2gcode
 
 NUM_SHADES = 4 # number of shading levels
@@ -168,22 +164,20 @@ def main():
     #img = processImage()
     img = cv.imread(args.filename)
 
-    #img = removeWhite(img)
+    #img = utils.image.removeWhite(img)
 
-    tmp = TempFolder()
+    tmp = utils.path.TempFolder()
 
     tmp_path = os.path.normpath("tmp")
     #tmp_path = tmp.getPath()
     if not os.path.exists(tmp_path):
         os.mkdir(tmp_path)
 
-    #cmyk = BGR2CMYK(img)
-    #cmy = BGR2CMY(img)
+    #cmyk = utils.color.BGR2CMYK(img)
+    #cmy = utils.color.BGR2CMY(img)
 
     channels = cv.split(img) #np.mod(cmy, 255)
     channels_processed = []
-
-    svg = vpype.VectorData()
 
     c = 0
     while c < len(channels):
@@ -210,30 +204,25 @@ def main():
         #output_path = applySpiral(path, line_color=COLORS[c], levels=levels)
         #output_path = applyCrossed(path, line_color=COLORS[c], levels=levels)
         #output_path = applySketchy(path)
-        output_path = os.path.join(tmp_path, f"img-{c}.svg")
+        output_path = os.path.join(tmp_path, f"img-{c}")
         #output_path = tmp.getPath(f"img-{c}.svg")
-        gen = Squiggle(path, output_path)
+        gen = generators.Squiggle(path, f"{output_path}.svg")
         #gen.output_path = output_path
         #gen.setImage(path)
         paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
         print(output_path)
 
-        gcode = svg2gcode.generate_gcode(paths)
-        gcode_path = output_path = os.path.join(tmp_path, f"img-{c}.gcode")
-        gcode_file = open(gcode_path, "w")
+        paths_optimized = utils.svg.optimize(paths)
+        wsvg(paths_optimized, filename=f"{output_path}-optimized.svg", colors=([COLORS[c]]*len(paths)))
+
+        gcode = svg2gcode.generate_gcode(paths_optimized)
+        gcode_file = open(f"{output_path}.gcode", "w")
         gcode_file.write(gcode)
         gcode_file.close
-
-        #channel_processed_svg = hatched.hatch(path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=1, image_scale=SCALE, show_plot=False)
 
         channel_processed = cv.imread(getOutputPngPath(output_path)) # , cv.IMREAD_GRAYSCALE
         channels_processed.append(channel_processed)
 
-        #channel_processed_svg = vpype.read_svg(output_path, 0.1, simplify=False)
-        #channel_processed_svg = svg2paths(output_path)
-        #svg.add(channel_processed_svg, c)
-
-        #paths, attributes, svg_attributes = svg2paths(output_path, return_svg_attributes=True)
         #wsvg(paths, attributes=attributes, svg_attributes=svg_attributes, filename=output_path, openinbrowser=False) # DEBUG: just for convenience
 
         c += 1
@@ -242,15 +231,11 @@ def main():
     #_, img_gray = cv.threshold(img_gray, 63, 255,cv.THRESH_TRUNC)
     #gray_path = os.path.join(tmp_path, "img-bw.png")
     #cv.imwrite(gray_path, img_gray)
-    #hatched.hatch(gray_path, hatch_pitch=4, levels=(20, 100, 180), blur_radius=0, image_scale=SCALE, show_plot=False)
     #output_path = applySpiral(gray_path, line_color="#000000", levels=levels)
     #output_path = applyCrossed(gray_path, levels=levels, line_color="#000000")
 
-    #vpype.write_svg("test.svg", svg)
-    #vpype.write_hpgl("test.hpgl", svg)
-
     #disp = cv.merge(channels_processed)
-    #disp = CMY2BGR(disp)
+    #disp = utils.color.BGR(disp)
     #cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
     #cv.imshow("image", np.hstack([disp]))
     #cv.imshow("image", np.hstack(channels_processed))
