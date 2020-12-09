@@ -28,11 +28,6 @@ Pillow = "*"
 [pipenv]
 allow_prereleases = true
 
-[packages.blackstripes]
-git = "https://github.com/fullscreennl/blackstripes-python-extensions"
-editable = true
-subdirectory = "src"
-
 [packages.svgpathtools]
 git = "https://github.com/mathandy/svgpathtools.git"
 editable = true

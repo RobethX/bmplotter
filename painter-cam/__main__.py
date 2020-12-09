@@ -4,7 +4,6 @@ import cv2 as cv
 import numpy as np
 #from matplotlib import pyplot as plt
 
-from blackstripes import spiral, sketchy, crossed
 from svgpathtools import svg2paths, wsvg
 
 import utils
@@ -16,17 +15,6 @@ NUM_SHADES = 4 # number of shading levels
 #COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
 COLORS = ["#FFFF00", "#FF00FF", "#00FFFF"] # YMC
 #COLORS = ["#0000FF", "#00FF00", "#FF0000"] # BGR
-
-# Blackstripes
-DEF_LEVELS = [200, 146, 110, 56] # TODO: generate with k-means
-DEF_LINE_COLOR = "#000000"
-LINE_WIDTH = 0.5
-LINE_SPACING = 1
-MAX_LINE_LENGTH = 100
-INTERNAL_LINE_SIZE = 2
-SCALE = 1.0
-ROUND = False
-SIG_TRANSFORM = [0, 0, 0]
 
 # K-Means parameters
 KMEANS_ACCURACY = 0.85 # percent
@@ -48,55 +36,6 @@ def getOutput(input_path, method=""):
 
 def getOutputPngPath(output_path):
     return output_path + ".png"
-
-def applySpiral(input_path, line_color=DEF_LINE_COLOR, levels=DEF_LEVELS):
-    output_path = getOutput(input_path, method="spiral")
-    draw_args = [
-        input_path,
-        output_path,
-        LINE_WIDTH,
-        line_color,
-        SCALE
-    ] \
-        + levels \
-        + [LINE_SPACING] \
-        + SIG_TRANSFORM \
-        + [ROUND]
-    spiral.draw(*draw_args)
-    return output_path
-
-
-def applyCrossed(input_path, line_color=DEF_LINE_COLOR, levels=DEF_LEVELS):
-    output_path = getOutput(input_path, method="crossed")
-    draw_args = [
-        input_path,
-        output_path,
-        LINE_WIDTH,
-        line_color,
-        SCALE
-    ] \
-        + levels \
-        + [1] \
-        + SIG_TRANSFORM
-    crossed.draw(*draw_args)
-    return output_path
-
-
-def applySketchy(input_path, line_color=DEF_LINE_COLOR):
-    output_path = getOutput(input_path, method="sketchy")
-    draw_args = [
-        input_path,
-        output_path,
-        LINE_WIDTH,
-        MAX_LINE_LENGTH,
-        line_color,
-        SCALE,
-        INTERNAL_LINE_SIZE,
-    ] \
-        + SIG_TRANSFORM
-    sketchy.draw(*draw_args)
-    return output_path
-
 
 def processImage():
     img_raw = cv.imread(args.filename) # load image
@@ -199,18 +138,14 @@ def main():
             avg = np.uint8(np.mean(x))
             levels.append(avg)
 
-        #levels = np.sort(levels)[::-1] # sort in decending order
-
-        #output_path = applySpiral(path, line_color=COLORS[c], levels=levels)
-        #output_path = applyCrossed(path, line_color=COLORS[c], levels=levels)
-        #output_path = applySketchy(path)
         output_path = os.path.join(tmp_path, f"img-{c}")
-        #output_path = tmp.getPath(f"img-{c}.svg")
+        #output_path = tmp.getPath(f"img-{c}")
         gen = generators.Squiggle(path, f"{output_path}.svg")
         #gen.output_path = output_path
         #gen.setImage(path)
         paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
         print(output_path)
+
 
         paths_optimized = utils.svg.optimize(paths)
         wsvg(paths_optimized, filename=f"{output_path}-optimized.svg", colors=([COLORS[c]]*len(paths)))
