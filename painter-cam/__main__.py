@@ -14,8 +14,9 @@ import svg2gcode
 NUM_SHADES = 4 # number of shading levels
 #COLORS = ["#FF0000", "#00FF00", "#0000FF"] # TODO: svgpathtools has a utility for converting hex colors
 #COLORS = ["#00FFFF", "#FF00FF", "#FFFF00", "#000000"] # CMYK
-COLORS = ["#FFFF00", "#FF00FF", "#00FFFF"] # YMC
+#COLORS = ["#FFFF00", "#FF00FF", "#00FFFF"] # YMC
 #COLORS = ["#0000FF", "#00FF00", "#FF0000"] # BGR
+COLORS = ["#FFFF00", "#FF00FF", "#00FFFF", "#000000"] # YMCK
 
 # K-Means parameters
 KMEANS_ACCURACY = 0.85 # percent
@@ -114,7 +115,8 @@ def main():
     #cmy = utils.color.BGR2CMY(img)
 
     channels = cv.split(img) #np.mod(cmy, 255)
-    channels_processed = []
+    #channels = cv.split(cmyk)
+    channels.append(cv.cvtColor(img, cv.COLOR_BGR2GRAY))
 
     c = 0
     while c < len(channels):

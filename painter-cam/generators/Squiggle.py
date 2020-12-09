@@ -21,7 +21,7 @@ DEF_LINE_COUNT = 50
 MIN_LINE_COUNT = 10
 MAX_LINE_COUNT = 200
 
-DEF_AMPLITUDE = 3.0
+DEF_AMPLITUDE = 2.5
 MIN_AMPLITUDE = 0.1
 MAX_AMPLITUDE = 5.0
 
@@ -64,10 +64,11 @@ class Squiggle(Generator):
         squiggles = []
 
         for y in range(0, self.img.height, self.img.height // self.lineCount): # self.img.height // self.lineCount
+            y = (y + y_offset) % self.img.height
             a = 0
             current_line = [] # store bits of the line
             if continuous:
-                current_line.append(complex(0, y + y_offset)) # start the line
+                current_line.append(complex(0, y)) # start the line
 
             for x in np.arange(self.spacing, self.img.width, self.spacing):
                 v = np.mean(self.img.getpixel((x, y))) # TODO: downsample image and average chunk!!
@@ -76,7 +77,7 @@ class Squiggle(Generator):
                 r = self.amplitude * (255 - v) / self.lineCount
                 a += (255 - v) / self.frequency
 
-                point = complex(x, y + np.sin(a + x_offset)*r + y_offset)
+                point = complex(x, y + np.sin(a + x_offset)*r)
 
                 if continuous:
                     current_line.append(point)
@@ -88,7 +89,7 @@ class Squiggle(Generator):
                         current_line = []
 
             current_line_path = polyline(*current_line)
-            if smooth:
+            if smooth and continuous: # TODO: fix smoothing on discontinuous paths
                 current_line_path = smoothed_path(current_line_path)
             squiggles.extend(current_line_path)
 
