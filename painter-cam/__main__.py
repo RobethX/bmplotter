@@ -27,17 +27,6 @@ KMEANS_CRITERIA = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 # DEFAULT PARAMETERS
 DEF_NUM_COLORS = 8
 
-def getOutput(input_path, method=""):
-    normpath = os.path.normpath(input_path)
-    name = ".".join(normpath.split(".")[:-1])
-    if len(method) > 0:
-        name += f"-{method}"
-    #print(name)
-    return name + ".svg"
-
-def getOutputPngPath(output_path):
-    return output_path + ".png"
-
 def processImage():
     img_raw = cv.imread(args.filename) # load image
     img = img_raw
@@ -166,29 +155,9 @@ def main():
         gcode_file.close
         log.info(f"Saving g-code to {output_path}.gcode")
 
-        channel_processed = cv.imread(getOutputPngPath(output_path)) # , cv.IMREAD_GRAYSCALE
-        channels_processed.append(channel_processed)
-
         #wsvg(paths, attributes=attributes, svg_attributes=svg_attributes, filename=output_path, openinbrowser=False) # DEBUG: just for convenience
 
         c += 1
-
-    #img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    #_, img_gray = cv.threshold(img_gray, 63, 255,cv.THRESH_TRUNC)
-    #gray_path = os.path.join(tmp_path, "img-bw.png")
-    #cv.imwrite(gray_path, img_gray)
-    #output_path = applySpiral(gray_path, line_color="#000000", levels=levels)
-    #output_path = applyCrossed(gray_path, levels=levels, line_color="#000000")
-
-    #disp = cv.merge(channels_processed)
-    #disp = utils.color.BGR(disp)
-    #cv.imwrite(os.path.join(tmp_path, "img-processed.png"), disp)
-    #cv.imshow("image", np.hstack([disp]))
-    #cv.imshow("image", np.hstack(channels_processed))
-    #while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
-    #    if cv.waitKey(100) >= 0:
-    #        break
-    #cv.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

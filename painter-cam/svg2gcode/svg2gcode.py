@@ -29,14 +29,8 @@ def path_to_gcode(path):
 
     path_gcode = g_string(x_start, y_start, prefix="G0") + shape_preamble
 
-    #path_gcode = f"""
-    #G0 F{FEED_RATE} X{x_start} Y{y_start}
-    #{shape_preamble}
-    #"""
-
     for segment in path:
         x, y = real(segment.end), imag(segment.end)
-        #path_gcode += f"G0 F{FEED_RATE} X{x_start} Y{y_start}"
         path_gcode += g_string(x, y)
 
     path_gcode += shape_postamble
