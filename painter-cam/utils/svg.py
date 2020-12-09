@@ -6,18 +6,21 @@ from penkit_optimize.route_util import (
     cost_of_route,
 )
 
+import logging
+log = logging.getLogger(__name__) 
+
 DEFAULT_MERGE_THRESHOLD = 2.0
 
 def optimize(paths, greedy=True, merge_paths=False, max_runtime=300, origin_x=0.0, origin_y=0.0):
     initial_cost = cost_of_route(paths)
-    print("Initial cost: {}".format(initial_cost)) # DEBUG: for testing
+    log.info("Initial cost: {}".format(initial_cost))
 
     path_graph = PathGraph(paths, origin=origin_x + (origin_y * 1j))
     greedy_solution = list(greedy_walk(path_graph))
     greedy_route = get_route_from_solution(greedy_solution, path_graph)
 
     greedy_cost = cost_of_route(greedy_route)
-    print("Cost after greedy optimization: {}".format(greedy_cost))
+    log.info("Cost after greedy optimization: {}".format(greedy_cost))
 
     assert greedy_cost < initial_cost # make sure optimized path costs less
 

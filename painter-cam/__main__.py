@@ -1,5 +1,6 @@
 import os
 import argparse
+import logging
 import cv2 as cv
 import numpy as np
 #from matplotlib import pyplot as plt
@@ -95,9 +96,17 @@ def main():
     parser = argparse.ArgumentParser(prog="painter-cam")
     parser.add_argument("filename", help="input image to convert")
     parser.add_argument("-c", help="amount of paint colors", action="store", dest="colors", default=DEF_NUM_COLORS, type=int)
+    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+    parser.add_argument("--log-file", help="log file path", action="store", dest="log_file", default=None, type=str)
 
     global args
     args = parser.parse_args()
+
+    logging.basicConfig(filename=args.log_file, format="%(levelname)s: %(message)s")
+    log = logging.getLogger()
+    if args.verbose:
+        #log.setLevel(logging.DEBUG)
+        log.setLevel(logging.INFO)
 
     # TODO: check if file exists
     #img = processImage()
@@ -120,6 +129,7 @@ def main():
 
     c = 0
     while c < len(channels):
+        log.info(f"Vectorizing layer {c}...")
         path = os.path.join(tmp_path, f"img-{c}.png")
         _, labels, centers = cv.kmeans(np.float32(channels[c]), KMEANS_ITERATIONS, None, KMEANS_CRITERIA, KMEANS_ATTEMPTS, KMEANS_FLAGS)
         #centers = (centers // 8) * 8
@@ -144,16 +154,17 @@ def main():
         #gen.output_path = output_path
         #gen.setImage(path)
         paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
-        print(output_path)
 
-
+        log.info(f"Optimizing paths for layer {c}...")
         paths_optimized = utils.svg.optimize(paths)
         wsvg(paths_optimized, filename=f"{output_path}-optimized.svg", colors=([COLORS[c]]*len(paths)))
 
+        log.info(f"Generating g-code for layer {c}...")
         gcode = svg2gcode.generate_gcode(paths_optimized)
         gcode_file = open(f"{output_path}.gcode", "w")
         gcode_file.write(gcode)
         gcode_file.close
+        log.info(f"Saving g-code to {output_path}.gcode")
 
         channel_processed = cv.imread(getOutputPngPath(output_path)) # , cv.IMREAD_GRAYSCALE
         channels_processed.append(channel_processed)

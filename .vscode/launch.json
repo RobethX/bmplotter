@@ -11,7 +11,8 @@
             "program": "painter-cam",
             "console": "integratedTerminal",
             "args": [
-                "${workspaceFolder}/examples/gompei.jpg"
+                "${workspaceFolder}/examples/gompei.jpg",
+                "--verbose"
             ]
         },
         {
