@@ -9,7 +9,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'painter-cam'
+NAME = 'bmplotter'
 DESCRIPTION = 'DESCRIPTION'
 URL = 'https://github.com/RobethX/painter-cam'
 EMAIL = 'rmchiocchio@wpi.edu'

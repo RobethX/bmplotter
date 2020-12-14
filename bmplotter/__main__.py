@@ -49,7 +49,7 @@ def processImage():
     return img
 
 def main():
-    parser = argparse.ArgumentParser(prog="painter-cam")
+    parser = argparse.ArgumentParser(prog="bmplotter")
     parser.add_argument("filename", help="input image to convert")
     parser.add_argument("-c", help="amount of paint colors", action="store", dest="colors", default=DEF_NUM_COLORS, type=int)
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true", dest="verbose")
