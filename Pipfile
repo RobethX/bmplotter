@@ -15,6 +15,7 @@ isort = "*"
 pytest = "*"
 tox = "*"
 pylint = "*"
+jupyter = "*"
 
 [packages]
 numpy = "*"
