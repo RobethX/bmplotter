@@ -11,7 +11,7 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'bmplotter'
 DESCRIPTION = 'DESCRIPTION'
-URL = 'https://github.com/RobethX/painter-cam'
+URL = 'https://github.com/RobethX/bmplotter'
 EMAIL = 'rmchiocchio@wpi.edu'
 AUTHOR = 'Rob Chiocchio'
 REQUIRES_PYTHON = '>=3.6.0'
