@@ -87,14 +87,12 @@ def main():
         cv.imwrite(path, channels[c])
         output_path = os.path.join(tmp_path, f"img-{c}")
         #output_path = tmp.getPath(f"img-{c}")
-        gen = generators.Squiggle(path, f"{output_path}.svg")
-        #gen.output_path = output_path
-        #gen.setImage(path)
+        gen = generators.Squiggle(img=channels[c]) #f"{output_path}.svg"
         paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
 
         log.info(f"Optimizing paths for layer {c}...")
         paths_optimized = utils.svg.optimize(paths)
-        wsvg(paths_optimized, filename=f"{output_path}-optimized.svg", colors=([COLORS[c]]*len(paths)))
+        wsvg(paths_optimized, filename=f"{output_path}.svg", colors=([COLORS[c]]*len(paths)))
 
         log.info(f"Generating g-code for layer {c}...")
         gcode = svg2gcode.generate_gcode(paths_optimized)
