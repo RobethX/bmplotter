@@ -3,7 +3,7 @@ from PIL import Image
 
 class Generator:
     def __init__(self, img=None, input_path=None):
-        if img.size:
+        if not (img is None):
             self.setImage(img)
         elif input_path:
             self.loadImage(input_path)
