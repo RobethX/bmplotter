@@ -36,8 +36,8 @@ MIN_POINTS = 5
 BRIGHTNESS_THRESHOLD = 250
 
 class Squiggle(Generator):
-    def __init__(self, input_path, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, img=None, input_path=None):
+        super().__init__(img, input_path)
 
         self.frequency = DEF_FREQUENCY
         self.lineCount = DEF_LINE_COUNT
@@ -94,7 +94,7 @@ class Squiggle(Generator):
             squiggles.extend(current_line_path)
 
         paths = Path(*squiggles).continuous_subpaths()
-        wsvg(paths, filename=self.output_path, colors=([color]*len(paths)))
+        #wsvg(paths, filename=self.output_path, colors=([color]*len(paths)))
 
         #return self.output_path
         return paths
