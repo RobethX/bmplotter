@@ -31,11 +31,18 @@ def main():
     parser = argparse.ArgumentParser(prog="bmplotter")
     parser.add_argument("filename", help="input image to convert")
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true", dest="verbose")
-    parser.add_argument("--log-file", help="log file path", action="store", dest="log_file", default=None, type=str)
-    parser.add_argument("--no-black", help="skip black layer", action="store_false", dest="black_layer")
+    parser.add_argument("-L", "--log-file", help="log file path", action="store", dest="log_file", default=None, type=str)
+    parser.add_argument("-B", "--no-black", help="skip black layer", action="store_false", dest="black_layer")
+    parser.add_argument("-C", "--no-crop", help="disable automatic cropping", action="store_false", dest="crop") # TODO: implement
     parser.add_argument("-n", "--normalize", help="normalize image", action="store_true", dest="normalize")
     parser.add_argument("-r", "--raw", help="skip image preprocessing (forces normalize to false)", action="store_true", dest="raw")
     parser.add_argument("-c", "--continuous", help="generate a continuous curve for the entire width of the image", action="store_true", dest="continuous")
+    parser.add_argument("-W", "--width", help="width of the resulting image (in mm)", action="store", dest="width", default=200, type=int) # TODO: implement
+    parser.add_argument("-H", "--height", help="height of the resulting image (in mm)", action="store", dest="height", default=200, type=int) # TODO: implement
+    parser.add_argument("-f", "--frequency", help="the frequency of the sine waves", action="store", dest="frequency", default=None, type=int) # TODO: implement
+    parser.add_argument("-l", "--line-count", help="the number of horizontal lines to generate", action="store", dest="line_count", default=None, type=int) # TODO: implement
+    parser.add_argument("-a", "--amplitude", help="the amplitude of the sine waves", action="store", dest="amplitude", default=None, type=float) # TODO: implement
+    parser.add_argument("-s", "--spacing", help="the vertical spacing of the sine waves", action="store", dest="spacing", default=None, type=float) # TODO: implement
 
     global args
     args = parser.parse_args()
