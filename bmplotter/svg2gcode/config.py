@@ -19,7 +19,7 @@ G21 ; metric
 """G-code emitted at the end of processing the SVG file"""
 postamble = f"""
 {CMD_PEN_UP} ; make sure pen is raised
-G1 X0 Y0 ; return to zero
+G0 X0 Y0 ; return to zero
 """
 
 """G-code emitted before processing a SVG shape"""
