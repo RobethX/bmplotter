@@ -27,27 +27,6 @@ KMEANS_CRITERIA = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 # DEFAULT PARAMETERS
 DEF_NUM_COLORS = 8
 
-def processImage():
-    img_raw = cv.imread(args.filename) # load image
-    img = img_raw
-
-    img = cv.normalize(img, None, 0, 255, cv.NORM_MINMAX)
-
-    kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-    #img = cv.medianBlur(img,5)
-    #img = cv.filter2D(img, -1, kernel)
-    img = cv.bilateralFilter(img, 9, 50, 50) # bilateral filter
-    #img = cv.ximgproc.anisotropicDiffusion(img, 0.5, 0.02, 10) # 2d anisotropic diffusion
-
-    # DEBUG: show image
-    cv.imshow("image", np.hstack([img_raw, img]))
-    while cv.getWindowProperty("image", cv.WND_PROP_VISIBLE) == 1:
-        if cv.waitKey(100) >= 0:
-            break
-    cv.destroyAllWindows()
-
-    return img
-
 def main():
     parser = argparse.ArgumentParser(prog="bmplotter")
     parser.add_argument("filename", help="input image to convert")
@@ -55,6 +34,8 @@ def main():
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true", dest="verbose")
     parser.add_argument("--log-file", help="log file path", action="store", dest="log_file", default=None, type=str)
     parser.add_argument("--no-black", help="skip black layer", action="store_false", dest="black_layer")
+    parser.add_argument("-n", "--normalize", help="normalize image", action="store_true", dest="normalize")
+    parser.add_argument("-r", "--raw", help="skip image preprocessing (forces normalize to false)", action="store_true", dest="raw")
 
     global args
     args = parser.parse_args()
@@ -66,8 +47,13 @@ def main():
         log.setLevel(logging.INFO)
 
     # TODO: check if file exists
-    #img = processImage()
     img = cv.imread(args.filename)
+    
+    # Image preprocessing
+    if not args.raw:
+        if args.normalize:
+            img = cv.normalize(img, None, 0, 255, cv.NORM_MINMAX) # maximize contrast
+        img = cv.bilateralFilter(img, 9, 50, 50) # bilateral filter
 
     tmp = utils.path.TempFolder()
 
