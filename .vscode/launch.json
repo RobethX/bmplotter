@@ -12,7 +12,6 @@
             "console": "integratedTerminal",
             "args": [
                 "${workspaceFolder}/examples/gompei.jpg",
-                "--normalize",
                 "--verbose"
             ]
         },

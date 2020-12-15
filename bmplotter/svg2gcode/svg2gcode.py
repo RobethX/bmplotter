@@ -20,7 +20,7 @@ def generate_gcode(paths):
     return gcode
 
 def g_string(x, y, prefix="G1", p=4):
-    return f"{prefix} X{SCALE*x:.{p}f} Y{150-SCALE*y:.{p}f}\n" # DEBUG: temporary fix for Y axis (250 max?)
+    return f"{prefix} X{SCALE*x:.{p}f} Y{210-SCALE*y:.{p}f}\n" # DEBUG: temporary fix for Y axis (300 max?)
 
 def path_to_gcode(path):
     #assert path.isclosed() # make sure path is closed

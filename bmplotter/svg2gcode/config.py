@@ -1,7 +1,7 @@
 """Constants and G-code parameters"""
-FEED_RATE = 4500 # mm/min
-DELAY = 0.100 # wait time between shapes
-SCALE = 0.125
+FEED_RATE = 4000 # mm/min
+DELAY = 0.200 # wait time between shapes
+SCALE = 0.2
 
 """G-code commands"""
 CMD_PEN_UP = "M5 S0" # raise pen command
