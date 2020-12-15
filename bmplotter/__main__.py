@@ -30,12 +30,12 @@ DEF_NUM_COLORS = 8
 def main():
     parser = argparse.ArgumentParser(prog="bmplotter")
     parser.add_argument("filename", help="input image to convert")
-    parser.add_argument("-c", help="amount of paint colors", action="store", dest="colors", default=DEF_NUM_COLORS, type=int)
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true", dest="verbose")
     parser.add_argument("--log-file", help="log file path", action="store", dest="log_file", default=None, type=str)
     parser.add_argument("--no-black", help="skip black layer", action="store_false", dest="black_layer")
     parser.add_argument("-n", "--normalize", help="normalize image", action="store_true", dest="normalize")
     parser.add_argument("-r", "--raw", help="skip image preprocessing (forces normalize to false)", action="store_true", dest="raw")
+    parser.add_argument("-c", "--continuous", help="generate a continuous curve for the entire width of the image", action="store_true", dest="continuous")
 
     global args
     args = parser.parse_args()
@@ -74,7 +74,7 @@ def main():
         output_path = os.path.join(tmp_path, f"img-{c}")
         #output_path = tmp.getPath(f"img-{c}")
         gen = generators.Squiggle(img=channels[c]) #f"{output_path}.svg"
-        paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c)
+        paths = gen.generate(color=COLORS[c], x_offset=c, y_offset=c, continuous=args.continuous)
 
         log.info(f"Optimizing paths for layer {c}...")
         paths_optimized = utils.svg.optimize(paths)
